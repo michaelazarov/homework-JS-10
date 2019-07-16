@@ -85,64 +85,29 @@ console.info ( user.presence )
 //  - Статические свойства и методы конструктора
 //  - Собственные свойства экземпляров
 //  - Унаследованные свойства экземпляров
-// ... делаем что-то типа чата...
 //------------------------------------
 while (document.head.firstChild)
     document.head.removeChild(document.head.firstChild)
 while (document.body.firstChild)
     document.body.removeChild(document.body.firstChild)
-var classes = [`.sign {
-      float: left;      
-      border: 1px solid #333;     
-      padding: 7px; 
-      font-size: 12pt;    
-      margin: 5px 0 5px 5px;      
-      background: #f0f0f0;    
-    }
 
-    .sign figcaption {
-      margin: 0 auto 5px;   
-    }
-
-    .message {
-      width: 335px;
-      height: 167px;
-      line-height: 50px;
-      font-size: 20pt;
-      border: 4px double black;
-      padding: 0 0 0 110px;
-      text-align: center;
-      
-    }
-      .input {
-      border: 1px solid #333;     
-      padding: 7px;     
-      margin: 5px 0 5px 5px;      
-      background: #f0f0f0;
-      width: 425px;
-    }`]
-var style = document.createElement('style')
-document.head.appendChild(style)
-for (var item of classes) {
-    style.appendChild(document.createTextNode(item))
+function createWindowMassage (elem) {
+  elemFigure = elem.appendChild(document.createElement('figure'))
+  elemFigure.className = "sign"
+  elemPOut = elemFigure.appendChild(document.createElement('p'))
+  elemImg = elemPOut.appendChild(document.createElement('img'))
+  elemImg.style = `width: 90px; height: 90px;`
+  elemImg.src = ''
+  elemCaption = elemFigure.appendChild(document.createElement('figcaption'))
+  elemPOut = elem.appendChild(document.createElement('p'))
+  elemPOut.className = "message"  
 }
-elemFigure = document.body.appendChild(document.createElement('figure'))
-elemFigure.className = "sign"
-elemPOut = elemFigure.appendChild(document.createElement('p'))
-elemImg = elemPOut.appendChild(document.createElement('img'))
-elemImg.style = `width: 90px; height: 90px;`
-elemImg.src = ''
-elemCaption = elemFigure.appendChild(document.createElement('figcaption'))
-elemPOut = document.body.appendChild(document.createElement('p'))
-elemPOut.className = "message"
-elemInput = document.body.appendChild(document.createElement('input'))
-elemInput.className = "input"
-elemInput.type = "text"
 
 function User(name='Noname', email='noname@box.com', avatar=User.getAvatar()) {
     this.name = name
     this.email = email
     this.photoURL = avatar
+    this.historyArrMessages = [] 
 }
 User.admin = {
     photoURL: "https://i.pinimg.com/originals/3d/47/4f/3d474f82ff71595e8081f9a120892ae8.gif",
@@ -162,27 +127,104 @@ User.avatars = [
 "https://vignette.wikia.nocookie.net/yogscast/images/8/8a/Avatar_Turps_2015.jpg"
 ]
 
-User.prototype.messageBox = {
+
+function setMessageBox () {
+  var classes = [
+      `.sign {
+      float: left;      
+      border: 1px solid #333;     
+      padding: 7px; 
+      font-size: 12pt;    
+      margin: 5px 0 5px 5px;      
+      background: #f0f0f0;
+      position: absolute;   
+    }
+    .sign figcaption {
+      margin: 0 auto 5px;   
+    }
+    .message {
+      width: 335px;
+      height: 167px;
+      line-height: 50px;
+      font-size: 20pt;
+      border: 4px double black;
+      padding: 0 0 0 110px;
+      text-align: center;   
+    }
+    .history {
+      width: 460px;
+      min-height: 70%;
+      line-height: 25px;
+      font-size: 14pt;
+      border: 4px double black;
+      padding: 0 0 0 10px;
+      text-align: center;
+
+    }   
+      .input {
+      border: 1px solid #333;     
+      padding: 7px;     
+      margin: 5px 0 5px 5px;      
+      background: #f0f0f0;
+      width: 425px;
+    }`
+  ]
+  var style = document.createElement('style')
+  document.head.appendChild(style)
+  for (var item of classes) {
+    style.appendChild(document.createTextNode(item))
+  }
+
+  createWindowMassage (document.body)
+
+  elemInput = document.body.appendChild(document.createElement('input'))
+  elemInput.className = "input"
+  elemInput.type = "text"
+
+  elemDivHistory = document.body.appendChild(document.createElement('div'))
+  elemDivHistory.className = "history"
+
+  User.prototype.messageBox = {
     TextOut: elemPOut,
     ImgOut: elemImg,
     NameUser: elemCaption,
     TextInput: elemInput,
+    BoxHistory: elemDivHistory
+  } 
 
 }
+setMessageBox ()
+
 User.prototype.messageBox.TextInput.onkeyup = function(event) {
     if (event.target === elemInput && event.keyCode === 13 && !!event.target.value) {
         User.prototype.write(event.target.value, User.admin.photoURL, User.admin.name)
         event.target.value = ''
     }
 }
-User.prototype.read = function() {
-    console.log('Прочитано: ' + this.name + ': ' + this.messageBox.TextOut.textContent)
+User.prototype.read = function(inputText, photoURL, name ) {
+    users.forEach((user) => {
+      console.log('Прочитано: ' + user.name + ': ' + user.messageBox.TextOut.textContent)
+      var historyMessage = {}
+      historyMessage.message = inputText
+    historyMessage.photoURL = photoURL
+    historyMessage.name = name
+    user.historyArrMessages.push(historyMessage)     
+
+    })
 }
 User.prototype.write = function(inputText='', photoURL=this.photoURL, name=this.name) {
-    this.messageBox.TextOut.innerHTML = inputText
-    this.messageBox.ImgOut.src = photoURL
-    this.messageBox.NameUser.innerHTML = name
+
+    !elemDivHistory.firstChild 
+        ?elemDiv = this.messageBox.BoxHistory.appendChild(document.createElement('div'))    
+        :elemDiv = this.messageBox.BoxHistory.insertBefore(document.createElement('div'),elemDivHistory.firstChild)
+    createWindowMassage (elemDiv)
+         
+    this.messageBox.TextOut.innerHTML = elemPOut.innerHTML = inputText
+    this.messageBox.ImgOut.src = elemImg.src = photoURL
+    this.messageBox.NameUser.innerHTML = elemCaption.innerHTML = name
+    this.read(inputText, photoURL, name )    
 }
+
 var users = [
   new User("Иван"), 
   new User('Alex',"alex@gmail.com"), 
