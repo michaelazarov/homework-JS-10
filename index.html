@@ -91,7 +91,8 @@ function User ( name ) {
     this.name = name
 	var presence = false
     Object.defineProperty ( this, "presence", {
-        get: () => presence ? name + " is present" :  name + " is absent",
+//      get: () => presence ? name + " is present" :  name + " is absent",
+        get: () => name + " is " + (presence ?  "present" :  "absent"),
         set: newVal => presence = newVal === '+' ?  true : false
     })      
 }
@@ -115,7 +116,7 @@ while (document.head.firstChild)
 while (document.body.firstChild)
     document.body.removeChild(document.body.firstChild)
 
-function createWindowMassage (elem) {
+function createWindowMessage (elem) {
   elemFigure = elem.appendChild(document.createElement('figure'))
   elemFigure.className = "sign"
   elemPOut = elemFigure.appendChild(document.createElement('p'))
@@ -141,10 +142,8 @@ User.getAvatar = function() {
     return this.avatars.shift()
 }
 User.avatars = [
-"https://st.depositphotos.com/1967477/1843/i/950/
-depositphotos_18438047-stock-photo-happy-smiley-emoticon-face.jpg",
-"https://static8.depositphotos.com/1007989/1011/i/950/
-depositphotos_10118087-stock-photo-smiley-in-love.jpg", 
+"https://st.depositphotos.com/1967477/1843/i/950/depositphotos_18438047-stock-photo-happy-smiley-emoticon-face.jpg",
+"https://static8.depositphotos.com/1007989/1011/i/950/depositphotos_10118087-stock-photo-smiley-in-love.jpg", 
 "https://cdn4.iconfinder.com/data/icons/user-avatar-flat-icons/512/User_Avatar-31-512.png", 
 "http://icons.iconarchive.com/icons/hopstarter/face-avatars/256/Male-Face-L3-icon.png", 
 "https://findicons.com/files/icons/1072/face_avatars/300/i05.png",
@@ -201,7 +200,7 @@ function setMessageBox () {
     style.appendChild(document.createTextNode(item))
   }
 
-  createWindowMassage (document.body)
+  createWindowMessage (document.body)
 
   elemInput = document.body.appendChild(document.createElement('input'))
   elemInput.className = "input"
@@ -242,9 +241,8 @@ User.prototype.write = function(inputText='', photoURL=this.photoURL, name=this.
 
     !elemDivHistory.firstChild 
         ?elemDiv = this.messageBox.BoxHistory.appendChild(document.createElement('div'))    
-        :elemDiv = this.messageBox.BoxHistory.insertBefore(document.createElement('div'),
-          elemDivHistory.firstChild)
-    createWindowMassage (elemDiv)
+        :elemDiv = this.messageBox.BoxHistory.insertBefore(document.createElement('div'),elemDivHistory.firstChild)
+    createWindowMessage (elemDiv)
          
     this.messageBox.TextOut.innerHTML = elemPOut.innerHTML = inputText
     this.messageBox.ImgOut.src = elemImg.src = photoURL

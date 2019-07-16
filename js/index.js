@@ -68,7 +68,8 @@ function User ( name ) {
     this.name = name
 	var presence = false
     Object.defineProperty ( this, "presence", {
-        get: () => presence ? name + " is present" :  name + " is absent",
+//      get: () => presence ? name + " is present" :  name + " is absent",
+        get: () => name + " is " + (presence ?  "present" :  "absent"),
         set: newVal => presence = newVal === '+' ?  true : false
     })      
 }
@@ -91,7 +92,7 @@ while (document.head.firstChild)
 while (document.body.firstChild)
     document.body.removeChild(document.body.firstChild)
 
-function createWindowMassage (elem) {
+function createWindowMessage (elem) {
   elemFigure = elem.appendChild(document.createElement('figure'))
   elemFigure.className = "sign"
   elemPOut = elemFigure.appendChild(document.createElement('p'))
@@ -175,7 +176,7 @@ function setMessageBox () {
     style.appendChild(document.createTextNode(item))
   }
 
-  createWindowMassage (document.body)
+  createWindowMessage (document.body)
 
   elemInput = document.body.appendChild(document.createElement('input'))
   elemInput.className = "input"
@@ -217,7 +218,7 @@ User.prototype.write = function(inputText='', photoURL=this.photoURL, name=this.
     !elemDivHistory.firstChild 
         ?elemDiv = this.messageBox.BoxHistory.appendChild(document.createElement('div'))    
         :elemDiv = this.messageBox.BoxHistory.insertBefore(document.createElement('div'),elemDivHistory.firstChild)
-    createWindowMassage (elemDiv)
+    createWindowMessage (elemDiv)
          
     this.messageBox.TextOut.innerHTML = elemPOut.innerHTML = inputText
     this.messageBox.ImgOut.src = elemImg.src = photoURL
